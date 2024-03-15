@@ -1,5 +1,8 @@
 import express from 'express';
 //No need of body-parser from version 4.16
+import 'express-async-errors';
+import mongoose from 'mongoose';
+
 import { currentUserRouter } from './routes/current-user';
 import { signinRouter } from './routes/signin';
 import { signupRouter } from './routes/signup';
@@ -15,12 +18,24 @@ app.use(signinRouter)
 app.use(signoutRouter)
 app.use(signupRouter)
 
-app.get('*', ()=> {
+app.all('*', async () => {
     throw new NotFoundError()
 })
 
 app.use(errorHandler)
 
-app.listen(3000, () => {
-    console.log('Listening on 3000')
-})
+const start = async () => {
+    try {
+        await mongoose.connect('mongodb://auth-mongo-srv:27017/auth')
+        console.log('Connected to MongoDB')
+    } catch (err) {
+        console.error(err)
+
+    }
+    app.listen(3000, () => {
+        console.log('Listening on 3000')
+    })
+}
+
+start()
+
