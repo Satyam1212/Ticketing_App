@@ -1,8 +1,9 @@
 import express, { Request, Response } from 'express';
-import { body, validationResult } from 'express-validator';
+import { body } from 'express-validator';
 import jwt from 'jsonwebtoken';
+
+import { validateRequest } from '../middlewares/validate-request';
 import { User } from '../models/user';
-import { RequestValidationError } from '../errors/request-validation-error';
 import { BadRequestError } from '../errors/bad-request-error';
 
 const router = express.Router();
@@ -15,43 +16,39 @@ router.post('/api/users/signup', [
     .trim()
     .isLength({ min: 4, max: 20 })
     .withMessage('Password must be between 4 and 10 characters')
-], async (req: Request, res: Response) => {
+],
+  validateRequest
+  ,
+  async (req: Request, res: Response) => {
 
-  const errors = validationResult(req);
+    const { email, password } = req.body;
 
-  if (!errors.isEmpty()) {
-    // console.log(errors)
-    throw new RequestValidationError(errors.array())
-  }
+    const existingUser = await User.findOne({ email });
 
-  const { email, password } = req.body;
+    if (existingUser) {
+      // console.log('Email in use')
+      // return res.send({})
+      throw new BadRequestError('Email in use');
+    }
 
-  const existingUser = await User.findOne({ email });
+    const user = User.build({ email, password })
 
-  if (existingUser) {
-    // console.log('Email in use')
-    // return res.send({})
-    throw new BadRequestError('Email in use');
-  }
+    //to save to db
+    await user.save()
 
-  const user = User.build({ email, password })
+    // Generate jWT //if you check document here we didnt provide any callback so it will Synchronously
+    const userJwt = jwt.sign({
+      id: user.id,
+      email: user.email
+    }, process.env.JWT_KEY!) // ! means to tell typescript that this is already checked
 
-  //to save to db
-  await user.save()
+    //stored it on session object
+    req.session = {
+      jwt: userJwt
+    }
 
-  // Generate jWT //if you check document here we didnt provide any callback so it will Synchronously
-  const userJwt = jwt.sign({
-    id: user.id,
-    email: user.email
-  }, 'asdf')
+    res.status(201).send(user)
 
-  //stored it on session object
-  req.session = {
-    jwt: userJwt
-  }
-
-  res.status(201).send(user)
-
-})
+  })
 
 export { router as signupRouter }
