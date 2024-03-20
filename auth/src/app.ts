@@ -17,7 +17,7 @@ app.use(express.json())
 app.use(
     cookieSession({
         signed: false,//We are going to disabled encryption on this cookie because jwt already encrypted
-        secure: true,//Cookie only used when user visiting our application over HTTPS connection
+        secure: process.env.NODE_ENV !== 'test',//Cookie only used when user visiting our application over HTTPS connection
 
     })
 )
