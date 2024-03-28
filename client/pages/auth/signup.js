@@ -12,7 +12,7 @@ const SignUp = () =>{
         body: {
             email, password
         },
-        onSuccess:  () => Router.push('/')
+        onSuccess: () => Router.push('/')
     })
 
     const onSubmit = async (event) =>{
@@ -35,7 +35,7 @@ const SignUp = () =>{
     }
 
     return (
-<form onSubmit={onSubmit}>
+    <form onSubmit={onSubmit}>
         <h1>SignUp</h1>
         <div className='form-group'>
             <label>Email Address</label>
