@@ -1,6 +1,6 @@
 // import axios from "axios"; as we create BuildClient we dont need this
 //We cant use hook here . hook is used in react component . getInitialProps is not a function
-import { BuildClient } from "../api/build-client";
+import  BuildClient  from "../api/build-client";
 
 const LandingPage = ({currentUser}) =>{
     return currentUser ? <h1>You are signed in</h1>: <h1>You are not signed in</h1>

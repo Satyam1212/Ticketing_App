@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 
-export const useRequest = ({url, method, body, onSuccess}) => {
+const useRequest = ({url, method, body, onSuccess}) => {
     const [errors, setErrors] = useState(null);
 
     const doRequest = async () => {
@@ -31,3 +31,4 @@ export const useRequest = ({url, method, body, onSuccess}) => {
     // As in hooks we return array  but here we are using object
     return {doRequest, errors};
 }
+export default useRequest;
