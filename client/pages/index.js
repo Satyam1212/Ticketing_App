@@ -51,6 +51,7 @@ const LandingPage = ({currentUser}) =>{
 
 
 LandingPage.getInitialProps = async(context) => {
+    console.log('Landing Page');// After creating getInitialProps in AppComponent I tried this and and this console log is not their (Because when we write getInitialProps to AppComponent , Then whatever we tied to individual page do not get automatically invoked)
     const {data} = await BuildClient(context).get('/api/users/currentuser');
     return data;
 }
